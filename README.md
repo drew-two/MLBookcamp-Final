@@ -1,33 +1,22 @@
 # ML for Image Classification: Kitchenware Kaggle Competition
 
-This repo explores simple CNNs from Keras applications, as well as larger and more powerful deep learning models such as image transformers to classify kitchenware and cutlery. Here we see exploratory data analysis (EDA), tuning different ML models, and hyperparameter search with Keras Tuner.
+
 - Model is submitted to Kaggle as well as having a local and cloud deploy via [BentoML](https://www.bentoml.com/)
 
 ## Dataset
 
-Dataset comes from [Kitchenware Classification Kaggle competition](https://www.kaggle.com/competitions/kitchenware-classification)
+Dataset comes from [Kaggle](https://www.kaggle.com/datasets/ifteshanajnin/carinsuranceclaimprediction-classification)
+- Tabular data records policy holder information such as vehicle age, make and model, fuel type etc.
 
-Includes of glasses, cups, plates, forks, knives and spoons.
-
-If [Kaggle CLI](https://www.kaggle.com/docs/api) is configured, download and unzip with `make dataset`
+Run `make dataset` to download/setup dataset. Requires [Kaggle CLI](https://www.kaggle.com/docs/api).
+- Otherwise, download from above Kaggle link, and unzip to `data/` in this directory
 
 ## Technologies
 - Python
 - Anaconda
 - Pipenv
-- CUDA
 - Pandas, NumPy
-- Tensorflow/Keras
-    - CNN models:
-        - ConvNext
-        - ConvNextV2
-        - EfficientNet
-    - Image transformer models:
-        - MaxViT
-        - DaViT
-        - CAiT
-        - DEiT\*
-        - BEiT\**
+
 - BentoML
 - Docker
 - AWS ECR
@@ -42,14 +31,9 @@ Starter notebook [keras-starter.ipynb](./source/notebooks/keras-starter.ipynb) f
 - Setup environment with Pipenv/Anaconda
 - Setup GPU support with CUDA toolkit in WSL2 (Ubuntu)
 - [EDA](./source/notebooks/eda.ipynb)
-    - Visualize images
-    - Visualize class imbalance
-    - Visualize image sizes
-    - Hypothesis for image augmentation
-- Prepare Dataset (80/20 train/validation split)
-- Explore different models for fine-tuning
-    - Explore CNN models from Keras applications
-    - Explore larger CNN models and Image Transformer models from [GitHub repo](https://github.com/leondgarse/)
+    - # TODO
+- Prepare Dataset # TODO
+- # TODO
 
 ## Setup
 
@@ -57,6 +41,7 @@ See [Setup instructions](./SETUP.md). Install Git LFS before pulling repo to pul
 
 ## Use
 
+# TODO
 Refer to [Makefile](./Makefile).
 0. (Optional) run `make train` to train model if you did not pull use Git LFS. **Will take very long time if GPU is not configured.**
 1. Run `make run` to build BentoML Bento (Docker image and webserver/API) for model and run locally.
@@ -127,20 +112,4 @@ Run `make aws` to make ECR repo, push Docker image, create ECS cluster and servi
 0. EDA
     - [eda.ipynb](./notebooks/eda.ipynb)
 1. Model experimentation
-    - [keras-starter-deit-cait.ipynb](./notebooks/keras-starter-deit-cait.ipynb): explores the DEiT and CAiT transformer models
-    - [keras-starter-efficientnet.ipynb](./notebooks/keras-starter-efficientnet.ipynb): explores EfficientNet CNN models
-    - [keras-starter-maxvit.ipynb](./notebooks/keras-starter-maxvit.ipynb): explores the MaxViT transformer model
-    - [keras-starter-swin.ipynb](./notebooks/keras-starter-swin.ipynb): explores the Swin Transformer model
-    - [model-testing.ipynb](./notebooks/model-testing.ipynb): performs a search over some transformer and CNN models
-2. Hyperparameter Search
-    - [augmentation-test.ipynb](./notebooks/augmentation-test.ipynb): explores augmentation from ImageDataGenerator. None chosen
-    - [randaug-testing.ipynb](./notebooks/randaug-testing.ipynb): explores augmentation using the RandAugment auto augmentation policy. Not chosen
-    - [learning-rate-test.ipynb)](./notebooks/learning-rate-test.ipynb): searches for learning rate with large search space
-    - [learning-rate-final.ipynb)](./notebooks/learning-rate-final.ipynb): searches for learning rate with narrower search space
-3. Training
-    - [kaggle-submission.ipynb](./notebooks/kaggle-submission.ipynb): submits trained BEiT model for Kaggle competition
-    - [trainer.ipynb](./trainer.ipynb): training and bentoml capture of model for deployment (uses DEiT to save on space/time)
-    - [trainer.py](./trainer.py): training script made from above notebook
-4. Deploy
-    - [service.py](./service.py): BentoML service used for Docker/ECS
-    - [test_prediction.py](./testing/test_prediction.py): Script for testing service 
+    - # TODO

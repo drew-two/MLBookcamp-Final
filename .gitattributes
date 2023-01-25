@@ -1,4 +1,0 @@
-./assets/model/**/* filter=lfs diff=lfs merge=lfs -text
-*.data-00000-of-00001 filter=lfs diff=lfs merge=lfs -text
-*.pb filter=lfs diff=lfs merge=lfs -text
-assets/model/variables/variables.data-00000-of-00001 filter=lfs diff=lfs merge=lfs -text

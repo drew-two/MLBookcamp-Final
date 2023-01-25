@@ -17,10 +17,8 @@ Self-tracking project progress.
 - [x] Trained only one model, no parameter tuning
 - [x] Trained multiple models (linear and tree-based)
     - For neural networks: tried multiple variations - with dropout or without, with extra inner layers or without
-    - **Note:** I explored CNNs as well as transformers, and their sizes. I believe this is sufficient.
 - [x] Trained multiple models and tuned their parameters.
     - For neural networks: same as previous, but also with tuning: adjusting learning rate, dropout rate, size of the inner layer, etc.
-    - **Note:** I explored image augmentation as well as learning rate. I believe this is sufficient.
 
 4. Exporting notebook to script ([trainer.py](./source/trainer.py))
 - [x] The logic for training the model is exported to a separate script
@@ -40,5 +38,5 @@ Self-tracking project progress.
 - [x] The application is containerized and the README describes how to build a contained and how to run it
 
 9. Cloud deployment (Run `make publish`)
-- [x] Docs describe clearly (with code) how to deploy the service to cloud or kubernetes cluster (local or remote)
-- [x] There's code for deployment to cloud or kubernetes cluster (local or remote). There's a URL for testing - or video/screenshot of testing it
+- [] Docs describe clearly (with code) how to deploy the service to cloud or kubernetes cluster (local or remote)
+- [] There's code for deployment to cloud or kubernetes cluster (local or remote). There's a URL for testing - or video/screenshot of testing it

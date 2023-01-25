@@ -6,10 +6,10 @@ AWS_CLUSTER_NAME=${MODEL_NAME}-cluster
 
 ## Download Dataset
 dataset: 
-	kaggle competitions download -c kitchenware-classification
+	kaggle datasets download ifteshanajnin/carinsuranceclaimprediction-classification
 	mkdir data
-	unzip kitchenware-classification.zip -d data > /dev/null
-	rm kitchenware-classification.zip
+	unzip carinsuranceclaimprediction-classification.zip -d data > /dev/null
+	rm carinsuranceclaimprediction-classification.zip
 
 ## Training model and running locally with BentoML
 train:
