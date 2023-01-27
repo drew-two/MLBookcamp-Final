@@ -21,21 +21,21 @@ Self-tracking project progress.
     - For neural networks: same as previous, but also with tuning: adjusting learning rate, dropout rate, size of the inner layer, etc.
 
 4. Exporting notebook to script ([trainer.py](./source/trainer.py))
-- [x] The logic for training the model is exported to a separate script
+- [] The logic for training the model is exported to a separate script
 
 5. Reproducibility (Run `make train`)
 - [x] It's possible to re-execute the notebook and the training script without errors. The dataset is committed in the project repository or there are clear instructions on how to download the data
 
-6. Model deployment (Run `make run`)
-- [x] Model is deployed (with Flask, BentoML or a similar framework)
+6. Model deployment 
+- [] Model is deployed (with Flask, BentoML or a similar framework)
 
 7. Dependency and environment management 
 - [x] Provided a file with dependencies (requirements.txt, pipfile, bentofile.yaml with dependencies, etc)
 - [x] Provided a file with dependencies and used virtual environment. README says how to install the dependencies and how to activate the env
 
 8. Containerization (Run `make build`)
-- [x] Dockerfile is provided or a tool that creates a docker image is used (e.g. BentoML)
-- [x] The application is containerized and the README describes how to build a contained and how to run it
+- [] Dockerfile is provided or a tool that creates a docker image is used (e.g. BentoML)
+- [] The application is containerized and the README describes how to build a contained and how to run it
 
 9. Cloud deployment (Run `make publish`)
 - [] Docs describe clearly (with code) how to deploy the service to cloud or kubernetes cluster (local or remote)

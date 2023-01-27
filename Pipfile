@@ -11,6 +11,7 @@ numpy = "*"
 xgboost = "*"
 imblearn = "*"
 scipy = "*"
+hyperopt = "*"
 
 [dev-packages]
 jupyter = "*"

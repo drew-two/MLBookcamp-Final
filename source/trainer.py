@@ -6,138 +6,60 @@
 # Using the DEiT small model here (DEiT Small Distilled Patch 16, Image size 244 x 244) in the interest of time and space for deployment
 
 import logging, os
-import bentoml
 
-import numpy as np
 import pandas as pd
-import tensorflow as tf
-import tensorflow_hub as hub
+import xgboost as xgb
 
-from tensorflow import keras
-from keras.applications import imagenet_utils
-
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.feature_extraction import DictVectorizer
 
 ## Variables and settings
 logging.disable(logging.WARNING)
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-DATASET_SIZE = 9367
-IMAGE_SIZE = 224
-BATCH_SIZE = 8
-WORKERS = 4
-EPOCHS = 10
+def cleanup_dataframe(df):
+    # Removing uppercase and spaces
+    df.columns = df.columns.str.lower().str.replace(' ', '_')
 
-BASE_PATH='./data'
-MODEL_PATH='./assets/model/'
+    categorical = list(df.dtypes[df.dtypes == 'object'].index)
 
-classes = [
-    'cup', 
-    'fork', 
-    'glass', 
-    'knife', 
-    'plate', 
-    'spoon'
-]
+    for c in categorical:
+        df[c] = df[c].str.lower().str.replace(' ', '_')
 
-# These models don't have the imagenet preprocessing built in so I have to apply this
-def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    # Cleaning up policy variable
+    df["policy_id"] = df["policy_id"].str[2:] # Removes the first two letters (id)
+    df["policy_id"] = df["policy_id"].astype("int")
 
-# Loads dataset CSVs and returns Tensorflow ImageDataGenerators for training and validation
-def get_train_dataset(path='data'):
+    # Adding variables for the individual values of max_torque and max_power
+    df[['max_torque_nm','max_torque_rpm']] = df['max_torque'].str.split("@", expand=True)
+    df['max_torque_rpm'] = df["max_torque_rpm"].str[:-3].astype("int")
+    df['max_torque_nm'] = df["max_torque_nm"].str[:-2].astype("float")
 
-    # First, we will load the training dataframe from CSV and split it into train and validation
-    df_train_full = pd.read_csv(f'{path}/train.csv', dtype={'Id': str})
-    df_train_full['filename'] = f'{path}/images/' + df_train_full['Id'] + '.jpg'
+    df[['max_power_bhp','max_power_rpm']] = df['max_power'].str.split("@", expand=True)
+    df['max_power_rpm'] = df["max_power_rpm"].str[:-3].astype("int")
+    df['max_power_bhp'] = df["max_power_bhp"].str[:-3].astype("float")
 
-    # Using 80-20 split, retrain train and validation dataframes
-    val_cutoff = int(len(df_train_full) * 0.8)
-    df_train = df_train_full[:val_cutoff]
-    df_val = df_train_full[val_cutoff:]
-
-    # Now let's create image generators
-    train_datagen = ImageDataGenerator(
-        preprocessing_function=preprocess_input,
-        dtype="float16"
-    )
-
-    train_generator = train_datagen.flow_from_dataframe(
-        df_train,
-        x_col='filename',
-        y_col='label',
-        target_size=(IMAGE_SIZE, IMAGE_SIZE),
-        batch_size=BATCH_SIZE,
-    )
-
-    val_datagen = ImageDataGenerator(
-        preprocessing_function=preprocess_input,
-        dtype="float16"
-    )
-
-    val_generator = val_datagen.flow_from_dataframe(
-        df_val,
-        x_col='filename',
-        y_col='label',
-        target_size=(IMAGE_SIZE, IMAGE_SIZE),
-        batch_size=BATCH_SIZE,
-    )
-
-    return train_generator, val_generator
-
-def get_callbacks():
-
-    earlystopping = tf.keras.callbacks.EarlyStopping(
-        monitor = 'val_accuracy',
-        min_delta = 1e-4,
-        patience = 3,
-        mode = 'max',
-        restore_best_weights = True,
-        verbose = 1
-    )
-
-    checkpoint = keras.callbacks.ModelCheckpoint(
-        'deit_s_d_p16_224_{epoch:02d}_{val_accuracy:.3f}.h5',
-        save_best_only=True,
-        save_weights_only=False,
-        monitor='val_accuracy',
-        mode='max'
-    )
-
-    return [earlystopping]#, checkpoint]
-
-
-def get_model_deit(model_url, res=IMAGE_SIZE, num_classes=len(classes)) -> tf.keras.Model:
-    inputs = tf.keras.Input((res, res, 3))
-    hub_module = hub.KerasLayer(model_url, trainable=False)
-
-    base_model_layers, _ = hub_module(inputs)   # Second output in the tuple is a dictionary containing attention scores.
-    outputs = keras.layers.Dense(num_classes, activation="softmax")(base_model_layers)
-    
-    return tf.keras.Model(inputs, outputs) 
-
-
-# Warnings are normal; the pre-trained weights for the original classifications heads are being skipped.
-
-def build_model():
-    model_gcs_path = "http://tfhub.dev/sayakpaul/deit_base_distilled_patch16_224_fe/1"
-    model = get_model_deit(model_gcs_path)
-
-    # Define the optimizer learning rate as a hyperparameter.
-    learning_rate = 1e-2
-    model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=learning_rate),
-        loss="categorical_crossentropy",
-        metrics=["accuracy"],
-    )
-    return model
+    return df
 
 if __name__ == "__main__":
 
     print("Loading datasets...")
-    train_generator, val_generator = get_train_dataset(path=BASE_PATH)
+    df_train = pd.read_csv("../../data/train.csv")
+    df_train = cleanup_dataframe(df)
+
+    dv = DictVectorizer(sparse=False)
+    features = dv.get_feature_names_out()
+
+    train_dict = df_train[categorical + numerical].to_dict(orient='records')
+    X_train = dv.fit_transform(train_dict)
+    y_train = df_train['is_claim']
+
+    # Don't fit on validation dataset
+    val_dict = df_val[categorical + numerical].to_dict(orient='records')
+    X_val = dv.transform(val_dict)
+    y_val = df_val['is_claim']
+
+    dtrain = xgb.DMatrix(X_train, label=y_train, feature_names=features)
+    dval = xgb.DMatrix(X_val, label=y_val, feature_names=features)
 
     # Build and train model
     print("Loading model...")
