@@ -1,6 +1,6 @@
-# ML for Image Classification: Kitchenware Kaggle Competition
+# Tabular Machine Learning: Car Insurance Claim Prediction
 
-Sorry, I did not finish this in time. See [EVALUATION.md](./EVALUATION.md) for what I finished.
+Binary classification using tree-based methods on tabular data.
 
 ## Dataset
 
